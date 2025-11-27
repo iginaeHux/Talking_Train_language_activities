@@ -6,11 +6,23 @@
     <title>🚂 Activity 1: Locomotive Lingo</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* New style for tokens that are already in the sentence area */
+        .sentence-token {
+            cursor: pointer;
+            margin-right: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .token-adverb { 
+            background-color: #3498db; /* Blue for Adverbs */ 
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
         <h1>🚂 Locomotive Lingo: Unscramble It!</h1>
-        <p class="activity-page-title">Activity 1: Simple Noun & Verb (Singular)</p>
+        <p class="activity-page-title" id="activity-counter">Activity 1: Simple Noun & Verb (Singular)</p>
     </header>
     <nav class="navigation">
         <a href="index.html">🏠 Main Hub</a>
@@ -20,7 +32,7 @@
     <main class="content-container">
 
         <div class="instruction-box">
-            <p><strong>Instructions:</strong> Drag the words (train tokens) from the bank below into the correct order in the dotted track area. Remember: the **Noun Carriage** 🟠 comes before the **Verb Locomotive** 🟡!</p>
+            <p><strong>Instructions:</strong> Click the words (train tokens) from the bank below in the correct order. Remember: the <strong>Noun Carriage</strong> 🟠 comes before the <strong>Verb Locomotive</strong> 🟡!</p>
         </div>
 
         <div class="sentence-area">
@@ -29,27 +41,23 @@
                 <span style="color: var(--yellow); margin: 0 10px;">🟡</span>
             </div>
             <div class="result-sentence" id="sentence-drop-zone">
-                <p>Drag the words here...</p>
+                <p>Click the words here...</p>
             </div>
         </div>
 
         <div class="word-bank" id="word-bank">
-            <div class="word-token token-verb" data-correct-position="3" data-word="walks" draggable="true">walks</div>
-            <div class="word-token token-noun" data-correct-position="2" data-word="cat" draggable="true">cat</div>
-            <div class="word-token token-article" data-correct-position="1" data-word="The" draggable="true">The</div>
-        </div>
+            </div>
 
         <div class="punctuation-area">
             Final Sentence (with punctuation): <span id="final-sentence-display"></span>
             <button onclick="addPunctuation('.')">🛑 Add Full Stop</button>
-            <button onclick="checkSentence()">✅ Check Answer</button>
+            <button class="check-button" onclick="checkSentence()">✅ Check Answer</button>
         </div>
-
+        
         <p id="feedback-message" style="font-size: 1.5em; font-weight: 700; margin-top: 20px; color: var(--text-dark);">Let's go!</p>
 
         <div class="pictogram-area">
-            <p>✏️ **Draw the Pictogram:** *The cat walks.*</p> 
-            <p>After you win, imagine the simple drawing: **A cat figure 🐈‍⬛ next to a walking motion 🚶.**</p>
+            <p>✏️ **Draw the Pictogram:** *Visual representation of the sentence will go here.*</p> 
         </div>
 
     </main>
@@ -58,323 +66,35 @@
     </footer>
 
     <script>
-        // --- JavaScript for Drag & Drop Logic (Essential for the interactivity) ---
-
-        const wordBank = document.getElementById('word-bank');
-        const dropZone = document.getElementById('sentence-drop-zone');
-        const finalDisplay = document.getElementById('final-sentence-display');
-        const feedback = document.getElementById('feedback-message');
-        let sentenceArray = [];
-        const correctSentence = "The cat walks."; // Includes capital and full stop
-
-        // Initial setup for drop zone text
-        dropZone.innerHTML = '';
-
-        // Drag events
-        document.querySelectorAll('.word-token').forEach(token => {
-            token.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', e.target.getAttribute('data-word'));
-                e.target.classList.add('dragging');
-            });
-            token.addEventListener('dragend', (e) => {
-                e.target.classList.remove('dragging');
-            });
-            token.addEventListener('click', (e) => {
-                // Click to move (better for mobile/accessibility)
-                addWordToSentence(e.target);
-            });
-        });
-
-        // Drop events
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault(); // Allows drop
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const word = e.dataTransfer.getData('text/plain');
-            const token = document.querySelector(`.word-token[data-word="${word}"]`);
-            if (token) {
-                addWordToSentence(token);
-            }
-        });
-
-        function addWordToSentence(token) {
-            if (token.parentNode === wordBank) {
-                const wordValue = token.getAttribute('data-word');
-                // Remove the word from the bank
-                wordBank.removeChild(token);
-
-                // Add a new token copy to the sentence array/DOM for display
-                const displayToken = document.createElement('span');
-                displayToken.className = 'word-token ' + token.className.split(' ').filter(c => c.startsWith('token-')).join(' ');
-                displayToken.textContent = wordValue;
-                displayToken.style.marginRight = '10px';
-                displayToken.style.cursor = 'pointer';
-                displayToken.onclick = () => removeWordFromSentence(displayToken, token);
-
-                dropZone.appendChild(displayToken);
-                sentenceArray.push(wordValue);
-                updateFinalDisplay();
-                feedback.textContent = 'Keep going! 🚧';
-            }
-        }
-
-        function removeWordFromSentence(displayToken, originalToken) {
-            dropZone.removeChild(displayToken);
-
-            const index = sentenceArray.indexOf(displayToken.textContent);
-            if (index > -1) {
-                sentenceArray.splice(index, 1);
-            }
-
-            // Return the word to the bank
-            wordBank.appendChild(originalToken);
-            updateFinalDisplay();
-            feedback.textContent = 'Try another spot! 🤔';
-        }
-
-
-        function updateFinalDisplay() {
-            let sentence = sentenceArray.join(' ');
-            // Ensure first word is capitalized for the final display preview
-            if (sentence.length > 0) {
-                sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1);
-            }
-            finalDisplay.textContent = sentence;
-        }
-
-        function addPunctuation(punc) {
-            let currentSentence = finalDisplay.textContent.trim();
-            if (currentSentence && !currentSentence.endsWith(punc)) {
-                finalDisplay.textContent = currentSentence + punc;
-            }
-        }
-
-        function checkSentence() {
-            let currentDisplay = finalDisplay.textContent.trim();
-
-            if (currentDisplay === correctSentence) {
-                feedback.textContent = '🥇 PERFECT! All aboard for the next level!';
-                feedback.style.color = 'var(--green)';
-                // Optional: Lock the words, show a cute success animation
-            } else {
-                feedback.textContent = `❌ Not quite! You have "${currentDisplay}". Remember the sentence order and the full stop!`;
-                feedback.style.color = 'var(--red)';
-            }
-        }
-    <script>
-        // --- JavaScript for Drag & Drop Logic (Expanded to 20 Activities) ---
+        // --- JavaScript for Activity Logic (20 Activities) ---
 
         const wordBank = document.getElementById('word-bank');
         const dropZone = document.getElementById('sentence-drop-zone');
         const finalDisplay = document.getElementById('final-sentence-display');
         const feedback = document.getElementById('feedback-message');
         const checkButton = document.querySelector('.check-button');
+        const activityCounter = document.getElementById('activity-counter');
+        
         const nextButton = document.createElement('button');
-
-        // --- THE 20 ACTIVITY BANK ---
-        // Format: [Correct Sentence, [ {word, type}, {word, type}, ... ]]
-        // Types: noun, verb, article, prep (preposition, for later expansion)
-        const activityBank = [
-            // Exercises 1-4 (Singular Noun-Verb)
-            { id: 1, sentence: "The cat walks.", words: [ {word: "The", type: "article"}, {word: "cat", type: "noun"}, {word: "walks", type: "verb"} ] },
-            { id: 2, sentence: "The dog runs.", words: [ {word: "The", type: "article"}, {word: "dog", type: "noun"}, {word: "runs", type: "verb"} ] },
-            { id: 3, sentence: "The boy throws.", words: [ {word: "The", type: "article"}, {word: "boy", type: "noun"}, {word: "throws", type: "verb"} ] },
-            { id: 4, sentence: "The girl swings.", words: [ {word: "The", type: "article"}, {word: "girl", type: "noun"}, {word: "swings", type: "verb"} ] },
-
-            // Exercises 5-8 (Regular Plural Noun-Verb)
-            { id: 5, sentence: "The cats walk.", words: [ {word: "The", type: "article"}, {word: "cats", type: "noun"}, {word: "walk", type: "verb"} ] },
-            { id: 6, sentence: "The dogs run.", words: [ {word: "The", type: "article"}, {word: "dogs", type: "noun"}, {word: "run", type: "verb"} ] },
-            { id: 7, sentence: "The boys throw.", words: [ {word: "The", type: "article"}, {word: "boys", type: "noun"}, {word: "throw", type: "verb"} ] },
-            { id: 8, sentence: "The girls swing.", words: [ {word: "The", type: "article"}, {word: "girls", type: "noun"}, {word: "swing", type: "verb"} ] },
-
-            // Exercises 9-12 (Irregular Plural Noun-Verb)
-            { id: 9, sentence: "The leaves fall.", words: [ {word: "The", type: "article"}, {word: "leaves", type: "noun"}, {word: "fall", type: "verb"} ] },
-            { id: 10, sentence: "The fish swim.", words: [ {word: "The", type: "article"}, {word: "fish", type: "noun"}, {word: "swim", type: "verb"} ] },
-            { id: 11, sentence: "The children dance.", words: [ {word: "The", type: "article"}, {word: "children", type: "noun"}, {word: "dance", type: "verb"} ] },
-            { id: 12, sentence: "The teeth shine.", words: [ {word: "The", type: "article"}, {word: "teeth", type: "noun"}, {word: "shine", type: "verb"} ] },
-
-            // NEW COMPLEX SENTENCES (Extending the Noun/Verb focus)
-            { id: 13, sentence: "The dog barks loudly.", words: [ {word: "The", type: "article"}, {word: "dog", type: "noun"}, {word: "barks", type: "verb"}, {word: "loudly", type: "adverb"} ] },
-            { id: 14, sentence: "The bird flies high.", words: [ {word: "high", type: "adverb"}, {word: "The", type: "article"}, {word: "bird", type: "noun"}, {word: "flies", type: "verb"} ] },
-            { id: 15, sentence: "A chef cooks dinner.", words: [ {word: "A", type: "article"}, {word: "chef", type: "noun"}, {word: "cooks", type: "verb"}, {word: "dinner", type: "noun"} ] },
-            { id: 16, sentence: "We read books.", words: [ {word: "We", type: "noun"}, {word: "read", type: "verb"}, {word: "books", type: "noun"} ] },
-            { id: 17, sentence: "They drive trucks.", words: [ {word: "drive", type: "verb"}, {word: "trucks", type: "noun"}, {word: "They", type: "noun"} ] },
-            { id: 18, sentence: "He eats slowly.", words: [ {word: "He", type: "noun"}, {word: "eats", type: "verb"}, {word: "slowly", type: "adverb"} ] },
-            { id: 19, sentence: "The engine runs fast.", words: [ {word: "The", type: "article"}, {word: "engine", type: "noun"}, {word: "runs", type: "verb"}, {word: "fast", type: "adverb"} ] },
-            { id: 20, sentence: "I swim daily.", words: [ {word: "daily", type: "adverb"}, {word: "I", type: "noun"}, {word: "swim", type: "verb"} ] }
-        ];
-
-        let currentActivityIndex = 0;
-        let sentenceArray = [];
-
-        // Helper to get token class based on type
-        function getTokenClass(type) {
-            switch (type) {
-                case 'noun':
-                    return 'token-noun';
-                case 'verb':
-                    return 'token-verb';
-                case 'adverb':
-                    return 'token-blue'; // Using blue for Adverbs (the suitcase)
-                default:
-                    return 'token-article'; // Using article for determiners/pronouns
-            }
-        }
-
-        // Initialize Next Activity Button
         nextButton.textContent = '➡️ Next Activity';
         nextButton.className = 'check-button';
+        nextButton.style.marginTop = '10px';
         nextButton.style.display = 'none';
         nextButton.onclick = loadNextActivity;
         checkButton.parentNode.appendChild(nextButton);
 
-        // --- Core Functions ---
-
-        function loadActivity(index) {
-            const activity = activityBank[index];
-            if (!activity) return;
-
-            currentActivityIndex = index;
-            sentenceArray = [];
-            dropZone.innerHTML = '';
-            wordBank.innerHTML = '';
-            feedback.textContent = `Activity ${activity.id} of ${activityBank.length}. Unscramble the Sentence!`;
-            feedback.style.color = 'var(--text-dark)';
-            checkButton.style.display = 'block';
-            nextButton.style.display = 'none';
-            finalDisplay.textContent = '';
-
-
-            // Shuffle the words for the bank
-            const shuffledWords = [...activity.words].sort(() => Math.random() - 0.5);
-
-            shuffledWords.forEach(item => {
-                const token = document.createElement('div');
-                token.className = `word-token ${getTokenClass(item.type)}`;
-                token.textContent = item.word;
-                token.setAttribute('data-word', item.word);
-                token.setAttribute('draggable', 'true');
-                token.addEventListener('dragstart', handleDragStart);
-                token.addEventListener('dragend', handleDragEnd);
-                token.addEventListener('click', () => addWordToSentence(token));
-                wordBank.appendChild(token);
-            });
-            
-            // Set up drag/drop listeners for the bank (if not already set)
-            if (!dropZone.hasAttribute('data-listeners-set')) {
-                dropZone.addEventListener('dragover', handleDragOver);
-                dropZone.addEventListener('drop', handleDrop);
-                dropZone.setAttribute('data-listeners-set', 'true');
-            }
-        }
-
-        // Drag/Drop Handlers (simplified for the new structure)
-        function handleDragStart(e) {
-            e.dataTransfer.setData('text/plain', e.target.getAttribute('data-word'));
-            e.target.classList.add('dragging');
-        }
-
-        function handleDragEnd(e) {
-            e.target.classList.remove('dragging');
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault(); 
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const word = e.dataTransfer.getData('text/plain');
-            const token = Array.from(wordBank.children).find(t => t.getAttribute('data-word') === word);
-            if (token) {
-                addWordToSentence(token);
-            }
-        }
-
-        function addWordToSentence(token) {
-            if (token.parentNode === wordBank) {
-                const wordValue = token.getAttribute('data-word');
-                // Remove the word from the bank
-                wordBank.removeChild(token);
-                
-                // Add a new token copy to the sentence array/DOM for display
-                const displayToken = document.createElement('span');
-                displayToken.className = 'word-token ' + token.className.split(' ').filter(c => c.startsWith('token-')).join(' ');
-                displayToken.textContent = wordValue;
-                displayToken.style.marginRight = '10px';
-                displayToken.style.cursor = 'pointer';
-                displayToken.onclick = () => removeWordFromSentence(displayToken, token);
-                
-                dropZone.appendChild(displayToken);
-                sentenceArray.push(wordValue);
-                updateFinalDisplay();
-                feedback.textContent = 'Keep going! 🚧';
-            }
-        }
-
-        function removeWordFromSentence(displayToken, originalToken) {
-            dropZone.removeChild(displayToken);
-            
-            const index = sentenceArray.indexOf(displayToken.textContent);
-            if (index > -1) {
-                sentenceArray.splice(index, 1);
-            }
-            
-            // Return the word to the bank
-            wordBank.appendChild(originalToken);
-            updateFinalDisplay();
-            feedback.textContent = 'Try another spot! 🤔';
-        }
-
-        function updateFinalDisplay() {
-            let sentence = sentenceArray.join(' ');
-            // Ensure first word is capitalized for the final display preview
-            if (sentence.length > 0) {
-                sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1);
-            }
-            finalDisplay.textContent = sentence;
-        }
-
-        function addPunctuation(punc) {
-            let currentSentence = finalDisplay.textContent.trim();
-            if (currentSentence && !currentSentence.endsWith(punc)) {
-                finalDisplay.textContent = currentSentence + punc;
-            }
-        }
-
-        function checkSentence() {
-            const correct = activityBank[currentActivityIndex].sentence;
-            let currentDisplay = finalDisplay.textContent.trim();
-            
-            if (currentDisplay === correct) {
-                feedback.textContent = '🥇 PERFECT! All aboard for the next activity!';
-                feedback.style.color = 'var(--green)';
-                checkButton.style.display = 'none';
-                nextButton.style.display = 'block';
-            } else {
-                feedback.textContent = `❌ Not quite! Remember the correct sequence and the punctuation!`;
-                feedback.style.color = 'var(--red)';
-            }
-        }
-        
-        function loadNextActivity() {
-            const nextIndex = currentActivityIndex + 1;
-            if (nextIndex < activityBank.length) {
-                loadActivity(nextIndex);
-            } else {
-                feedback.textContent = "🥳 YOU CRUSHED IT! All 20 Lingo activities complete. You win.";
-                feedback.style.color = 'var(--purple)';
-                checkButton.style.display = 'none';
-                nextButton.style.display = 'none';
-            }
-        }
-
-
-        // Start the first activity on load
-        loadActivity(0); 
-
-    </script>
-</body>
-</html>
+        // --- THE 20 ACTIVITY BANK ---
+        const activityBank = [
+            // Format: { id, sentence, words: [ {word, type} ] }
+            { id: 1, sentence: "The cat walks.", words: [ {word: "The", type: "article"}, {word: "cat", type: "noun"}, {word: "walks", type: "verb"} ] },
+            { id: 2, sentence: "The dog runs.", words: [ {word: "The", type: "article"}, {word: "dog", type: "noun"}, {word: "runs", type: "verb"} ] },
+            { id: 3, sentence: "The boy throws.", words: [ {word: "The", type: "article"}, {word: "boy", type: "noun"}, {word: "throws", type: "verb"} ] },
+            { id: 4, sentence: "The girl swings.", words: [ {word: "The", type: "article"}, {word: "girl", type: "noun"}, {word: "swings", type: "verb"} ] },
+            { id: 5, sentence: "The cats walk.", words: [ {word: "The", type: "article"}, {word: "cats", type: "noun"}, {word: "walk", type: "verb"} ] },
+            { id: 6, sentence: "The dogs run.", words: [ {word: "The", type: "article"}, {word: "dogs", type: "noun"}, {word: "run", type: "verb"} ] },
+            { id: 7, sentence: "The boys throw.", words: [ {word: "The", type: "article"}, {word: "boys", type: "noun"}, {word: "throw", type: "verb"} ] },
+            { id: 8, sentence: "The girls swing.", words: [ {word: "The", type: "article"}, {word: "girls", type: "noun"}, {word: "swing", type: "verb"} ] },
+            { id: 9, sentence: "The leaves fall.", words: [ {word: "The", type: "article"}, {word: "leaves", type: "noun"}, {word: "fall", type: "verb"} ] },
+            { id: 10, sentence: "The fish swim.", words: [ {word: "The", type: "article"}, {word: "fish", type: "noun"}, {word: "swim", type: "verb"} ] },
+            { id: 11, sentence: "The children dance.", words: [ {word: "The", type: "article"}, {word: "children", type: "noun"}, {word: "dance", type: "verb"} ] },
+            { id: 12, sentence: "The teeth shine
