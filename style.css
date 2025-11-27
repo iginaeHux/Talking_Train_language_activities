@@ -228,3 +228,8 @@ h1 {
     min-height: 40px;
     margin-top: 10px;
 }
+/* GLOBAL BOLDING FIX */
+strong {
+    font-weight: 700;
+    color: var(--text-dark); /* Ensure strong tags are readable */
+}
