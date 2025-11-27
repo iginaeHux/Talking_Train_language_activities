@@ -37,10 +37,11 @@
             padding: 15px;
             border-radius: 10px;
             cursor: pointer;
-            background-color: var(--purple); /* Suitcase color */
+            background-color: var(--purple); /* The Abstract part color */
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
             transition: transform 0.1s, opacity 0.1s;
             user-select: none;
+            color: white;
         }
         .icon-token:hover {
             transform: scale(1.05);
@@ -56,12 +57,21 @@
             flex-wrap: wrap;
             gap: 10px;
         }
+        .sequence-token {
+            background-color: var(--yellow);
+            color: var(--text-dark);
+            font-size: 2.5em;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <h1>🖼️ Pictogram Puzzle</h1>
-        <p class="activity-page-title">Activity 3: Visualizing Abstract Grammar (Adverbs)</p>
+        <p class="activity-page-title" id="activity-counter">Activity 1 of 20</p>
     </header>
     <nav class="navigation">
         <a href="index.html">🏠 Main Hub</a>
@@ -71,11 +81,11 @@
     <main class="content-container">
 
         <div class="instruction-box">
-            <p><strong>Instructions:</strong> The sentence below contains an **Adverb** (Blue Suitcase 🔵). Click the pictogram tokens in the correct order to tell the visual story of the sentence.</p>
+            <p><strong>Instructions:</strong> The sentence contains parts that can be mapped to a visual story. Click the pictogram tokens in the correct order to match the **sentence flow**.</p>
         </div>
 
         <div class="puzzle-box">
-            <div class="target-sentence">
+            <div class="target-sentence" id="target-sentence">
                 I searched for the keys everywhere.
             </div>
 
@@ -84,13 +94,11 @@
             </div>
 
             <div class="icon-bank" id="icon-bank">
-                <div class="icon-token" data-value="keys" data-order="3">🔑</div>
-                <div class="icon-token" data-value="I" data-order="1">👤</div>
-                <div class="icon-token" data-value="everywhere" data-order="4">🌎</div>
-                <div class="icon-token" data-value="searched" data-order="2">🔎</div>
-            </div>
+                </div>
             
             <button class="check-button" onclick="checkSequence()">🔍 Check Sequence</button>
+            <button class="check-button" id="next-activity-btn" style="display: none; background-color: var(--purple);" onclick="loadNextActivity()">➡️ Next Activity</button>
+
             <p id="feedback-message" style="font-size: 1.5em; font-weight: 700; margin-top: 20px;">Ready to solve the puzzle!</p>
 
         </div>
@@ -101,39 +109,88 @@
     </footer>
 
     <script>
-        // --- JavaScript for Pictogram Puzzle Logic ---
+        // --- JavaScript for Pictogram Puzzle Logic (20 Activities) ---
 
         const iconBank = document.getElementById('icon-bank');
         const sequenceZone = document.getElementById('sequence-zone');
         const feedback = document.getElementById('feedback-message');
+        const targetSentenceDisplay = document.getElementById('target-sentence');
+        const nextButton = document.getElementById('next-activity-btn');
+        const activityCounter = document.getElementById('activity-counter');
+        const checkButton = document.querySelector('.check-button');
+
         let currentSequence = [];
-        const correctOrder = ["👤", "🔎", "🔑", "🌎"]; // The emojis themselves in order
+        let currentActivityIndex = 0;
 
-        // Event listener for clicking tokens
-        iconBank.addEventListener('click', (e) => {
-            const token = e.target.closest('.icon-token');
-            if (token && token.parentNode === iconBank) {
-                addToSequence(token);
-            }
-        });
+        // --- THE 20 ACTIVITY BANK ---
+        // Format: { id, sentence, correctOrder: [ {emoji, name} ] }
+        const activityBank = [
+            { id: 1, sentence: "The cat walks.", correctOrder: [ {emoji: "🐈‍⬛", name: "Cat"}, {emoji: "🚶", name: "Walks"} ] },
+            { id: 2, sentence: "I searched for the keys everywhere.", correctOrder: [ {emoji: "👤", name: "I"}, {emoji: "🔎", name: "Searched"}, {emoji: "🔑", name: "Keys"}, {emoji: "🌎", name: "Everywhere"} ] },
+            { id: 3, sentence: "The boy throws a ball.", correctOrder: [ {emoji: "👦🏻", name: "Boy"}, {emoji: "⚾", name: "Throws"}, {emoji: "🟡", name: "Ball"} ] },
+            { id: 4, sentence: "The girls swing quickly.", correctOrder: [ {emoji: "👧🏻👧🏼", name: "Girls"}, {emoji: "🔄", name: "Swing"}, {emoji: "💨", name: "Quickly"} ] },
+            { id: 5, sentence: "The dogs run home.", correctOrder: [ {emoji: "🐶🐶", name: "Dogs"}, {emoji: "🏃", name: "Run"}, {emoji: "🏠", name: "Home"} ] },
+            { id: 6, sentence: "The train stops suddenly.", correctOrder: [ {emoji: "🚂", name: "Train"}, {emoji: "🛑", name: "Stops"}, {emoji: "🚨", name: "Suddenly"} ] },
+            { id: 7, sentence: "The students learn well.", correctOrder: [ {emoji: "🧑‍🎓", name: "Students"}, {emoji: "🧠", name: "Learn"}, {emoji: "✔️", name: "Well"} ] },
+            { id: 8, sentence: "A flower grows slowly.", correctOrder: [ {emoji: "🌸", name: "Flower"}, {emoji: "🌱", name: "Grows"}, {emoji: "🐌", name: "Slowly"} ] },
+            { id: 9, sentence: "My friend calls loudly.", correctOrder: [ {emoji: "👯", name: "Friend"}, {emoji: "📞", name: "Calls"}, {emoji: "🔊", name: "Loudly"} ] },
+            { id: 10, sentence: "The doctor helps often.", correctOrder: [ {emoji: "👩‍⚕️", name: "Doctor"}, {emoji: "➕", name: "Helps"}, {emoji: "🔁", name: "Often"} ] },
+            { id: 11, sentence: "The boat sails beautifully.", correctOrder: [ {emoji: "⛵", name: "Boat"}, {emoji: "🌊", name: "Sails"}, {emoji: "✨", name: "Beautifully"} ] },
+            { id: 12, sentence: "The fish swim far.", correctOrder: [ {emoji: "🐠", name: "Fish"}, {emoji: "🏊", name: "Swim"}, {emoji: "➡️", name: "Far"} ] },
+            { id: 13, sentence: "The clock ticks regularly.", correctOrder: [ {emoji: "⏰", name: "Clock"}, {emoji: "✔️", name: "Ticks"}, {emoji: "🗓️", name: "Regularly"} ] },
+            { id: 14, sentence: "The mouse eats quietly.", correctOrder: [ {emoji: "🐁", name: "Mouse"}, {emoji: "🧀", name: "Eats"}, {emoji: "🤫", name: "Quietly"} ] },
+            { id: 15, sentence: "We drove home quickly.", correctOrder: [ {emoji: "🧑‍🤝‍🧑", name: "We"}, {emoji: "🚗", name: "Drove"}, {emoji: "💨", name: "Quickly"} ] },
+            { id: 16, sentence: "She wrote a letter yesterday.", correctOrder: [ {emoji: "👩", name: "She"}, {emoji: "✍️", name: "Wrote"}, {emoji: "✉️", name: "Letter"}, {emoji: "📅", name: "Yesterday"} ] },
+            { id: 17, sentence: "The engine runs fast.", correctOrder: [ {emoji: "⚙️", name: "Engine"}, {emoji: "🏃", name: "Runs"}, {emoji: "🚀", name: "Fast"} ] },
+            { id: 18, sentence: "He eats slowly.", correctOrder: [ {emoji: "👨", name: "He"}, {emoji: "🍔", name: "Eats"}, {emoji: "🐌", name: "Slowly"} ] },
+            { id: 19, sentence: "The children dance joyfully.", correctOrder: [ {emoji: "👶🏼👶🏽", name: "Children"}, {emoji: "🕺", name: "Dance"}, {emoji: "😄", name: "Joyfully"} ] },
+            { id: 20, sentence: "I swim daily.", correctOrder: [ {emoji: "👤", name: "I"}, {emoji: "🏊", name: "Swim"}, {emoji: "🗓️", name: "Daily"} ] }
+        ];
 
-        // Function to add token to the sequence
+        // --- Core Functions ---
+
+        function loadActivity(index) {
+            const activity = activityBank[index];
+            if (!activity) return;
+
+            currentActivityIndex = index;
+            currentSequence = [];
+            sequenceZone.innerHTML = '<span style="font-size: 1.2em;">Click the icons below in order...</span>'; 
+            iconBank.innerHTML = '';
+            
+            targetSentenceDisplay.textContent = activity.sentence;
+            activityCounter.textContent = `Activity ${activity.id} of ${activityBank.length}`;
+            
+            feedback.textContent = `Ready to solve the puzzle!`;
+            feedback.style.color = 'var(--text-dark)';
+            nextButton.style.display = 'none';
+            checkButton.style.display = 'inline-block';
+
+            // Shuffle the icons for the bank
+            const shuffledIcons = [...activity.correctOrder].sort(() => Math.random() - 0.5);
+
+            shuffledIcons.forEach(item => {
+                const token = document.createElement('div');
+                token.className = 'icon-token';
+                token.textContent = item.emoji;
+                token.setAttribute('data-name', item.name);
+                token.onclick = () => addToSequence(token);
+                iconBank.appendChild(token);
+            });
+        }
+
         function addToSequence(token) {
             // Remove initial text prompt if it exists
             if (sequenceZone.querySelector('span')) {
                 sequenceZone.innerHTML = '';
             }
-
+            
             // Create a copy for the sequence zone
             const sequenceToken = document.createElement('div');
-            sequenceToken.className = 'icon-token';
+            sequenceToken.className = 'sequence-token';
             sequenceToken.textContent = token.textContent;
-            sequenceToken.style.backgroundColor = 'var(--yellow)'; // Highlight when placed
-            sequenceToken.style.cursor = 'pointer';
-            
-            // Add click handler to remove from sequence
             sequenceToken.onclick = () => removeFromSequence(sequenceToken, token.textContent);
-
+            
             sequenceZone.appendChild(sequenceToken);
             currentSequence.push(token.textContent);
 
@@ -144,12 +201,17 @@
             feedback.textContent = `Icon added. Current length: ${currentSequence.length}`;
         }
 
-        // Function to remove token from the sequence
         function removeFromSequence(sequenceToken, originalEmoji) {
             sequenceZone.removeChild(sequenceToken);
 
-            // Remove from array
-            const index = currentSequence.lastIndexOf(originalEmoji);
+            // Remove from array (find the last instance of the emoji)
+            let index = -1;
+            for(let i = currentSequence.length - 1; i >= 0; i--) {
+                if(currentSequence[i] === originalEmoji) {
+                    index = i;
+                    break;
+                }
+            }
             if (index > -1) {
                 currentSequence.splice(index, 1);
             }
@@ -164,24 +226,42 @@
             feedback.textContent = `Icon removed. Current length: ${currentSequence.length}`;
         }
 
-        // Function to check the final sequence
         function checkSequence() {
-            if (currentSequence.length !== correctOrder.length) {
-                feedback.textContent = `❌ Not finished! You need ${correctOrder.length} icons.`;
+            const correctOrderEmojis = activityBank[currentActivityIndex].correctOrder.map(item => item.emoji);
+
+            if (currentSequence.length !== correctOrderEmojis.length) {
+                feedback.textContent = `❌ Not finished! You need ${correctOrderEmojis.length} icons.`;
                 feedback.style.color = 'var(--red)';
                 return;
             }
 
-            const isCorrect = currentSequence.every((value, index) => value === correctOrder[index]);
+            const isCorrect = currentSequence.every((value, index) => value === correctOrderEmojis[index]);
 
             if (isCorrect) {
                 feedback.textContent = '🥳 VISUAL MASTERY! That is the correct flow of the sentence.';
                 feedback.style.color = 'var(--green)';
+                nextButton.style.display = 'inline-block';
+                checkButton.style.display = 'none';
             } else {
                 feedback.textContent = '🤔 Check your steps! The visual story is out of order. Try again.';
                 feedback.style.color = 'var(--red)';
             }
         }
+
+        function loadNextActivity() {
+            const nextIndex = currentActivityIndex + 1;
+            if (nextIndex < activityBank.length) {
+                loadActivity(nextIndex);
+            } else {
+                feedback.textContent = "🥳 YOU CRUSHED IT! All 20 Pictogram activities complete. You are a visual genius.";
+                feedback.style.color = 'var(--purple)';
+                nextButton.style.display = 'none';
+                checkButton.style.display = 'none';
+            }
+        }
+
+        // Start the first activity on load
+        loadActivity(0); 
     </script>
 </body>
 </html>
