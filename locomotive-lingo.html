@@ -105,4 +105,150 @@
             { id: 17, sentence: "They drive trucks.", words: [ {word: "They", type: "article"}, {word: "drive", type: "verb"}, {word: "trucks", type: "noun"} ] },
             { id: 18, sentence: "He eats slowly.", words: [ {word: "He", type: "article"}, {word: "eats", type: "verb"}, {word: "slowly", type: "adverb"} ] },
             { id: 19, sentence: "The engine runs fast.", words: [ {word: "The", type: "article"}, {word: "engine", type: "noun"}, {word: "runs", type: "verb"}, {word: "fast", type: "adverb"} ] },
+            { id: 20, sentence: "I swim daily.", words: [ {word: "I", type: "article"}, {word: "swim", type: "verb"}, {word: "daily", type: "adverb"} ] }
+        ];
+
+        let currentActivityIndex = 0;
+        let sentenceArray = [];
+
+        // Helper to get token class based on type
+        function getTokenClass(type) {
+            switch (type) {
+                case 'noun':
+                    return 'token-noun';
+                case 'verb':
+                    return 'token-verb';
+                case 'adverb':
+                    return 'token-adverb'; // Defined in <style>
+                default:
+                    return 'token-article'; 
+            }
+        }
+
+        // --- Core Functions ---
+
+        function loadActivity(index) {
+            const activity = activityBank[index];
+            if (!activity) return;
+
+            currentActivityIndex = index;
+            sentenceArray = [];
+            dropZone.innerHTML = '<p>Click the words here...</p>'; // Reset drop zone text
+            wordBank.innerHTML = '';
+            feedback.textContent = `Activity ${activity.id} of ${activityBank.length}. Unscramble the Sentence!`;
+            activityCounter.textContent = `Activity ${activity.id}: ${activity.sentence.substring(0, activity.sentence.length - 1)}`;
+            feedback.style.color = 'var(--text-dark)';
+            checkButton.style.display = 'block';
+            nextButton.style.display = 'none';
+            finalDisplay.textContent = '';
+
+
+            // Shuffle the words for the bank
+            const shuffledWords = [...activity.words].sort(() => Math.random() - 0.5);
+
+            shuffledWords.forEach(item => {
+                const token = document.createElement('div');
+                token.className = `word-token ${getTokenClass(item.type)}`;
+                token.textContent = item.word;
+                token.setAttribute('data-word', item.word);
+                token.onclick = () => addWordToSentence(token); // Use click instead of drag/drop
+                wordBank.appendChild(token);
+            });
+            
+        }
+
+        function addWordToSentence(token) {
+            if (token.parentNode === wordBank) {
+                // Remove initial text prompt if it exists
+                if (dropZone.querySelector('p')) {
+                    dropZone.innerHTML = '';
+                }
+                
+                const wordValue = token.getAttribute('data-word');
+                // Remove the word from the bank visually (by moving it)
+                wordBank.removeChild(token);
+                
+                // Add the token to the sentence area
+                token.className = token.className.replace('word-token', 'sentence-token');
+                token.onclick = () => removeWordFromSentence(token, wordValue);
+                
+                dropZone.appendChild(token);
+                sentenceArray.push(wordValue);
+                updateFinalDisplay();
+                feedback.textContent = 'Keep going! 🚧';
+            }
+        }
+
+        function removeWordFromSentence(displayToken, wordValue) {
+            dropZone.removeChild(displayToken);
+            
+            const index = sentenceArray.indexOf(wordValue);
+            if (index > -1) {
+                sentenceArray.splice(index, 1);
+            }
+            
+            // Return the word to the bank (recreate original token)
+            const originalToken = document.createElement('div');
+            originalToken.className = displayToken.className.replace('sentence-token', 'word-token');
+            originalToken.textContent = wordValue;
+            originalToken.setAttribute('data-word', wordValue);
+            originalToken.onclick = () => addWordToSentence(originalToken);
+            
+            wordBank.appendChild(originalToken);
+            updateFinalDisplay();
+            feedback.textContent = 'Try another spot! 🤔';
+        }
+
+        function updateFinalDisplay() {
+            let sentence = sentenceArray.join(' ');
+            // Ensure first word is capitalized for the final display preview
+            if (sentence.length > 0) {
+                sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+            }
+            finalDisplay.textContent = sentence;
+        }
+
+        function addPunctuation(punc) {
+            let currentSentence = finalDisplay.textContent.trim();
+            if (currentSentence && !currentSentence.endsWith(punc)) {
+                finalDisplay.textContent = currentSentence + punc;
+            }
+        }
+
+        function checkSentence() {
+            const correct = activityBank[currentActivityIndex].sentence;
+            let currentDisplay = finalDisplay.textContent.trim();
+            
+            if (currentDisplay === correct) {
+                feedback.textContent = '🥇 PERFECT! All aboard for the next activity!';
+                feedback.style.color = 'var(--green)';
+                checkButton.style.display = 'none';
+                nextButton.style.display = 'block';
+            } else {
+                feedback.textContent = `❌ Not quite! Remember the correct sequence and the full stop!`;
+                feedback.style.color = 'var(--red)';
+            }
+        }
+        
+        function loadNextActivity() {
+            const nextIndex = currentActivityIndex + 1;
+            if (nextIndex < activityBank.length) {
+                loadActivity(nextIndex);
+            } else {
+                feedback.textContent = "🥳 YOU CRUSHED IT! All 20 Lingo activities complete. Time to master another module.";
+                feedback.style.color = 'var(--purple)';
+                checkButton.style.display = 'none';
+                nextButton.style.display = 'none';
+            }
+        }
+
+        // --- EXECUTION CODE: THIS IS WHAT WAS MISSING ---
+        window.onload = function() {
+            loadActivity(0);
+        };
+        // --------------------------------------------------
+
+    </script>
+</body>
+</html>
             { id: 20, sentence: "I swim daily
