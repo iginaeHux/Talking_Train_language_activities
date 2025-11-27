@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚂 Activity 1: Locomotive Lingo</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <h1>🚂 Locomotive Lingo: Unscramble It!</h1>
+        <p class="activity-page-title">Activity 1: Simple Noun & Verb (Singular)</p>
+    </header>
+    <nav class="navigation">
+        <a href="index.html">🏠 Main Hub</a>
+        <a href="plural-punctuation.html">2. Plural Punctuation 🔠</a>
+        <a href="pictogram-puzzle.html">3. Pictogram Puzzle 🖼️</a>
+    </nav>
+    <main class="content-container">
+
+        <div class="instruction-box">
+            <p><strong>Instructions:</strong> Drag the words (train tokens) from the bank below into the correct order in the dotted track area. Remember: the **Noun Carriage** 🟠 comes before the **Verb Locomotive** 🟡!</p>
+        </div>
+
+        <div class="sentence-area">
+            <div class="train-track-visual" id="train-track-icons">
+                <span style="color: var(--orange); margin: 0 10px;">🟠</span> 
+                <span style="color: var(--yellow); margin: 0 10px;">🟡</span>
+            </div>
+            <div class="result-sentence" id="sentence-drop-zone">
+                <p>Drag the words here...</p>
+            </div>
+        </div>
+
+        <div class="word-bank" id="word-bank">
+            <div class="word-token token-verb" data-correct-position="3" data-word="walks" draggable="true">walks</div>
+            <div class="word-token token-noun" data-correct-position="2" data-word="cat" draggable="true">cat</div>
+            <div class="word-token token-article" data-correct-position="1" data-word="The" draggable="true">The</div>
+        </div>
+
+        <div class="punctuation-area">
+            Final Sentence (with punctuation): <span id="final-sentence-display"></span>
+            <button onclick="addPunctuation('.')">🛑 Add Full Stop</button>
+            <button onclick="checkSentence()">✅ Check Answer</button>
+        </div>
+
+        <p id="feedback-message" style="font-size: 1.5em; font-weight: 700; margin-top: 20px; color: var(--text-dark);">Let's go!</p>
+
+        <div class="pictogram-area">
+            <p>✏️ **Draw the Pictogram:** *The cat walks.*</p> 
+            <p>After you win, imagine the simple drawing: **A cat figure 🐈‍⬛ next to a walking motion 🚶.**</p>
+        </div>
+
+    </main>
+    <footer class="footer">
+        <p>All aboard for language success! ✨</p>
+    </footer>
+
+    <script>
+        // --- JavaScript for Drag & Drop Logic (Essential for the interactivity) ---
+
+        const wordBank = document.getElementById('word-bank');
+        const dropZone = document.getElementById('sentence-drop-zone');
+        const finalDisplay = document.getElementById('final-sentence-display');
+        const feedback = document.getElementById('feedback-message');
+        let sentenceArray = [];
+        const correctSentence = "The cat walks."; // Includes capital and full stop
+
+        // Initial setup for drop zone text
+        dropZone.innerHTML = '';
+
+        // Drag events
+        document.querySelectorAll('.word-token').forEach(token => {
+            token.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.getAttribute('data-word'));
+                e.target.classList.add('dragging');
+            });
+            token.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+            });
+            token.addEventListener('click', (e) => {
+                // Click to move (better for mobile/accessibility)
+                addWordToSentence(e.target);
+            });
+        });
+
+        // Drop events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault(); // Allows drop
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const word = e.dataTransfer.getData('text/plain');
+            const token = document.querySelector(`.word-token[data-word="${word}"]`);
+            if (token) {
+                addWordToSentence(token);
+            }
+        });
+
+        function addWordToSentence(token) {
+            if (token.parentNode === wordBank) {
+                const wordValue = token.getAttribute('data-word');
+                // Remove the word from the bank
+                wordBank.removeChild(token);
+
+                // Add a new token copy to the sentence array/DOM for display
+                const displayToken = document.createElement('span');
+                displayToken.className = 'word-token ' + token.className.split(' ').filter(c => c.startsWith('token-')).join(' ');
+                displayToken.textContent = wordValue;
+                displayToken.style.marginRight = '10px';
+                displayToken.style.cursor = 'pointer';
+                displayToken.onclick = () => removeWordFromSentence(displayToken, token);
+
+                dropZone.appendChild(displayToken);
+                sentenceArray.push(wordValue);
+                updateFinalDisplay();
+                feedback.textContent = 'Keep going! 🚧';
+            }
+        }
+
+        function removeWordFromSentence(displayToken, originalToken) {
+            dropZone.removeChild(displayToken);
+
+            const index = sentenceArray.indexOf(displayToken.textContent);
+            if (index > -1) {
+                sentenceArray.splice(index, 1);
+            }
+
+            // Return the word to the bank
+            wordBank.appendChild(originalToken);
+            updateFinalDisplay();
+            feedback.textContent = 'Try another spot! 🤔';
+        }
+
+
+        function updateFinalDisplay() {
+            let sentence = sentenceArray.join(' ');
+            // Ensure first word is capitalized for the final display preview
+            if (sentence.length > 0) {
+                sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+            }
+            finalDisplay.textContent = sentence;
+        }
+
+        function addPunctuation(punc) {
+            let currentSentence = finalDisplay.textContent.trim();
+            if (currentSentence && !currentSentence.endsWith(punc)) {
+                finalDisplay.textContent = currentSentence + punc;
+            }
+        }
+
+        function checkSentence() {
+            let currentDisplay = finalDisplay.textContent.trim();
+
+            if (currentDisplay === correctSentence) {
+                feedback.textContent = '🥇 PERFECT! All aboard for the next level!';
+                feedback.style.color = 'var(--green)';
+                // Optional: Lock the words, show a cute success animation
+            } else {
+                feedback.textContent = `❌ Not quite! You have "${currentDisplay}". Remember the sentence order and the full stop!`;
+                feedback.style.color = 'var(--red)';
+            }
+        }
+    </script>
+</body>
+</html>
