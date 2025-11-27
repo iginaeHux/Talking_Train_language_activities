@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚂 Activity 3: Pictogram Puzzle</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Specific styles for the Pictogram Puzzle */
+        .puzzle-box {
+            background-color: var(--blue); /* Adverb color */
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .target-sentence {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            padding: 10px;
+            border-bottom: 2px dashed white;
+        }
+        .icon-bank {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .icon-token {
+            font-size: 2.5em;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: var(--purple); /* Suitcase color */
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s, opacity 0.1s;
+            user-select: none;
+        }
+        .icon-token:hover {
+            transform: scale(1.05);
+        }
+        .sequence-drop-zone {
+            min-height: 80px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🖼️ Pictogram Puzzle</h1>
+        <p class="activity-page-title">Activity 3: Visualizing Abstract Grammar (Adverbs)</p>
+    </header>
+    <nav class="navigation">
+        <a href="index.html">🏠 Main Hub</a>
+        <a href="locomotive-lingo.html">1. Locomotive Lingo 🧩</a>
+        <a href="plural-punctuation.html">2. Plural Punctuation 🔠</a>
+    </nav>
+    <main class="content-container">
+
+        <div class="instruction-box">
+            <p><strong>Instructions:</strong> The sentence below contains an **Adverb** (Blue Suitcase 🔵). Click the pictogram tokens in the correct order to tell the visual story of the sentence.</p>
+        </div>
+
+        <div class="puzzle-box">
+            <div class="target-sentence">
+                I searched for the keys everywhere.
+            </div>
+
+            <div class="sequence-drop-zone" id="sequence-zone">
+                <span style="font-size: 1.2em;">Click the icons below in order...</span>
+            </div>
+
+            <div class="icon-bank" id="icon-bank">
+                <div class="icon-token" data-value="keys" data-order="3">🔑</div>
+                <div class="icon-token" data-value="I" data-order="1">👤</div>
+                <div class="icon-token" data-value="everywhere" data-order="4">🌎</div>
+                <div class="icon-token" data-value="searched" data-order="2">🔎</div>
+            </div>
+            
+            <button class="check-button" onclick="checkSequence()">🔍 Check Sequence</button>
+            <p id="feedback-message" style="font-size: 1.5em; font-weight: 700; margin-top: 20px;">Ready to solve the puzzle!</p>
+
+        </div>
+
+    </main>
+    <footer class="footer">
+        <p>Keep those visual memory tracks clear! ✨</p>
+    </footer>
+
+    <script>
+        // --- JavaScript for Pictogram Puzzle Logic ---
+
+        const iconBank = document.getElementById('icon-bank');
+        const sequenceZone = document.getElementById('sequence-zone');
+        const feedback = document.getElementById('feedback-message');
+        let currentSequence = [];
+        const correctOrder = ["👤", "🔎", "🔑", "🌎"]; // The emojis themselves in order
+
+        // Event listener for clicking tokens
+        iconBank.addEventListener('click', (e) => {
+            const token = e.target.closest('.icon-token');
+            if (token && token.parentNode === iconBank) {
+                addToSequence(token);
+            }
+        });
+
+        // Function to add token to the sequence
+        function addToSequence(token) {
+            // Remove initial text prompt if it exists
+            if (sequenceZone.querySelector('span')) {
+                sequenceZone.innerHTML = '';
+            }
+
+            // Create a copy for the sequence zone
+            const sequenceToken = document.createElement('div');
+            sequenceToken.className = 'icon-token';
+            sequenceToken.textContent = token.textContent;
+            sequenceToken.style.backgroundColor = 'var(--yellow)'; // Highlight when placed
+            sequenceToken.style.cursor = 'pointer';
+            
+            // Add click handler to remove from sequence
+            sequenceToken.onclick = () => removeFromSequence(sequenceToken, token.textContent);
+
+            sequenceZone.appendChild(sequenceToken);
+            currentSequence.push(token.textContent);
+
+            // Hide the original token
+            token.style.opacity = '0.3';
+            token.style.pointerEvents = 'none';
+
+            feedback.textContent = `Icon added. Current length: ${currentSequence.length}`;
+        }
+
+        // Function to remove token from the sequence
+        function removeFromSequence(sequenceToken, originalEmoji) {
+            sequenceZone.removeChild(sequenceToken);
+
+            // Remove from array
+            const index = currentSequence.lastIndexOf(originalEmoji);
+            if (index > -1) {
+                currentSequence.splice(index, 1);
+            }
+
+            // Restore original token visibility
+            const originalToken = Array.from(iconBank.children).find(t => t.textContent === originalEmoji && t.style.pointerEvents === 'none');
+            if (originalToken) {
+                originalToken.style.opacity = '1';
+                originalToken.style.pointerEvents = 'auto';
+            }
+            
+            feedback.textContent = `Icon removed. Current length: ${currentSequence.length}`;
+        }
+
+        // Function to check the final sequence
+        function checkSequence() {
+            if (currentSequence.length !== correctOrder.length) {
+                feedback.textContent = `❌ Not finished! You need ${correctOrder.length} icons.`;
+                feedback.style.color = 'var(--red)';
+                return;
+            }
+
+            const isCorrect = currentSequence.every((value, index) => value === correctOrder[index]);
+
+            if (isCorrect) {
+                feedback.textContent = '🥳 VISUAL MASTERY! That is the correct flow of the sentence.';
+                feedback.style.color = 'var(--green)';
+            } else {
+                feedback.textContent = '🤔 Check your steps! The visual story is out of order. Try again.';
+                feedback.style.color = 'var(--red)';
+            }
+        }
+    </script>
+</body>
+</html>
