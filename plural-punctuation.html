@@ -8,6 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* Specific styles for the Plural Switcher */
+        .activity-counter {
+            color: var(--green);
+            font-size: 1.2em;
+            margin-top: -10px;
+        }
         .switch-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -19,15 +24,18 @@
             padding: 25px;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            min-height: 250px;
+            transition: background-color 0.4s;
         }
         .singular-panel { border: 3px solid var(--orange); }
         .plural-panel { border: 3px solid var(--green); }
 
         .s-token-zone {
-            font-size: 2em;
+            font-size: 1.8em;
             font-weight: 700;
-            padding: 15px;
+            padding: 15px 0;
             min-height: 50px;
+            line-height: 1.4;
         }
 
         .s-morpheme {
@@ -39,21 +47,28 @@
             display: inline-block;
             transition: transform 0.2s;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 0.8em;
+            line-height: 1;
+            margin: 0 2px;
+            user-select: none;
         }
         .s-morpheme:hover {
             transform: scale(1.1);
         }
         .pictogram-visual {
             min-height: 100px;
-            font-size: 4em;
+            font-size: 3em;
             margin-top: 15px;
+        }
+        .check-button {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <header class="header">
         <h1>🚂 Plural Punctuation Switcher</h1>
-        <p class="activity-page-title">Activity 2: Singular vs. Regular Plural (Noun & Verb)</p>
+        <p class="activity-page-title activity-counter" id="activity-counter">Activity 1 of 20</p>
     </header>
     <nav class="navigation">
         <a href="index.html">🏠 Main Hub</a>
@@ -63,31 +78,30 @@
     <main class="content-container">
 
         <div class="instruction-box">
-            <p><strong>Instructions:</strong> Use the **$-s$ token** 🔴 to change the sentence from singular to plural. Drag the token from the verb and drop it onto the noun to make the switch! Watch the picture change.</p>
+            <p><strong>Instructions:</strong> Drag the **$-s$ token** 🔴 from the verb (Singular side) and drop it onto the noun (Plural side) to correctly switch the sentence from singular to plural. Watch the picture change!</p>
         </div>
 
         <div class="switch-container">
             <div class="singular-panel" id="singular-panel">
-                <h3>Singular (One Cat) 🐱</h3>
+                <h3 id="singular-title">Singular (One Cat) 🐱</h3>
                 <div class="s-token-zone" id="singular-sentence">
-                    The cat walk<span class="s-morpheme" id="s-token" draggable="true" data-word="-s">-s</span>
-                </div>
+                    </div>
                 <div class="pictogram-visual" id="singular-pictogram">
-                    🚶
-                </div>
+                    </div>
             </div>
 
             <div class="plural-panel" id="plural-panel">
-                <h3>Plural (Multiple Cats) 🐈‍⬛🐈‍⬛</h3>
+                <h3 id="plural-title">Plural (Multiple Cats) 🐈‍⬛🐈‍⬛</h3>
                 <div class="s-token-zone" id="plural-sentence">
-                    The <span id="plural-noun-target">cats</span> <span id="plural-verb-target">walk</span>
-                </div>
+                    </div>
                 <div class="pictogram-visual" id="plural-pictogram">
-                    🚶🚶
-                </div>
-                <p id="plural-feedback" style="color: var(--red);">The sentence currently has two S's. Fix it!</p>
+                    </div>
             </div>
         </div>
+
+        <button class="check-button" onclick="checkState()">✅ Check State</button>
+        <button class="check-button" id="next-activity-btn" style="display: none; background-color: var(--purple);" onclick="loadNextActivity()">➡️ Next Activity</button>
+        <p id="feedback-message" style="font-size: 1.5em; font-weight: 700; margin-top: 20px; color: var(--text-dark);">Move the -s to the correct side!</p>
 
     </main>
     <footer class="footer">
@@ -95,89 +109,189 @@
     </footer>
 
     <script>
-        // --- JavaScript for the Plural Switcher Logic ---
+        // --- JavaScript for the Plural Switcher Logic (20 Activities) ---
 
-        const sToken = document.getElementById('s-token');
-        const singularPanel = document.getElementById('singular-panel');
-        const pluralPanel = document.getElementById('plural-panel');
-        const pluralNounTarget = document.getElementById('plural-noun-target');
-        const pluralVerbTarget = document.getElementById('plural-verb-target');
+        const sToken = document.createElement('span');
+        sToken.id = 's-token';
+        sToken.className = 's-morpheme';
+        sToken.textContent = '-s';
+        sToken.draggable = true;
+        sToken.addEventListener('dragstart', handleDragStart);
+        sToken.addEventListener('click', handleTokenClick); // Click handler for accessibility
+
+        const singularSentence = document.getElementById('singular-sentence');
+        const pluralSentence = document.getElementById('plural-sentence');
         const singularPictogram = document.getElementById('singular-pictogram');
         const pluralPictogram = document.getElementById('plural-pictogram');
-        const pluralFeedback = document.getElementById('plural-feedback');
+        const singularPanel = document.getElementById('singular-panel');
+        const pluralPanel = document.getElementById('plural-panel');
+        const nextButton = document.getElementById('next-activity-btn');
+        const feedback = document.getElementById('feedback-message');
+        const activityCounter = document.getElementById('activity-counter');
 
-        // Initial setup for visual representation
-        function updateVisuals(isPlural) {
-            if (isPlural) {
-                // Plural State: Noun has -s, Verb does not
-                pluralNounTarget.textContent = 'cats';
-                pluralVerbTarget.textContent = 'walk';
-                pluralPanel.style.backgroundColor = 'var(--yellow)'; 
-                pluralFeedback.textContent = '🥇 Correct! The -s moved to the noun.';
-                pluralFeedback.style.color = 'var(--green)';
-                singularPanel.style.backgroundColor = 'white';
-                singularPictogram.style.opacity = 0.5;
-                pluralPictogram.style.opacity = 1.0;
-            } else {
-                // Singular State: Noun does not have -s, Verb has -s
-                pluralNounTarget.textContent = 'cat';
-                pluralVerbTarget.textContent = 'walks';
-                singularPanel.style.backgroundColor = 'var(--yellow)';
-                pluralFeedback.textContent = 'Fix the plural side!';
-                pluralFeedback.style.color = 'var(--red)';
-                pluralPanel.style.backgroundColor = 'white';
-                singularPictogram.style.opacity = 1.0;
-                pluralPictogram.style.opacity = 0.5;
+        // --- THE 20 ACTIVITY BANK ---
+        // Format: [Singular Noun, Singular Verb, Singular Icon, Plural Icon]
+        const activityBank = [
+            ["The cat", "walks.", "🐱🚶", "🐈‍⬛🐈‍⬛🚶"], // 1
+            ["The dog", "runs.", "🐕‍🦺🏃", "🐶🐶🏃"], // 2
+            ["The boy", "throws.", "👦🏻⚾", "⚽⚽👦🏻"], // 3
+            ["The girl", "reads.", "👧🏻📖", "📚📚👧🏻"], // 4
+            ["The train", "stops.", "🚂🛑", "🚂🚂🛑"], // 5
+            ["The engine", "whistles.", "🔊🚂", "🚂🔊🚂"], // 6
+            ["The student", "learns.", "🧑‍🎓🧠", "📚🧑‍🎓🧠"], // 7
+            ["The teacher", "smiles.", "👩‍🏫😊", "👨‍🏫👩‍🏫😊"], // 8
+            ["A flower", "grows.", "🌸🌱", "🌼🌼🌱"], // 9
+            ["A baby", "cries.", "👶😭", "🍼👶😭"], // 10
+            ["My friend", "calls.", "📞👯", "📞🧑‍🤝‍🧑"], // 11
+            ["The doctor", "helps.", "👩‍⚕️➕", "🧑‍⚕️👩‍⚕️➕"], // 12
+            ["The clock", "ticks.", "⏰✔️", "🕰️⏰✔️"], // 13
+            ["The boat", "sails.", "⛵🌊", "⚓⛵🌊"], // 14
+            ["A star", "shines.", "⭐✨", "🌟🌟✨"], // 15
+            ["A pencil", "draws.", "✏️🖍️", "🖊️✏️🖍️"], // 16
+            ["The mouse", "eats.", "🐁🧀", "🐭🐭🧀"], // 17
+            ["The rabbit", "jumps.", "🐇⬆️", "🐰🐰⬆️"], // 18
+            ["The light", "blinks.", "💡⚡", "💡💡⚡"], // 19
+            ["The farmer", "works.", "🧑‍🌾🔨", "👩‍🌾🧑‍🌾🔨"] // 20
+        ];
+
+        let currentActivityIndex = 0;
+        let sTokenIsPlural = false; // Tracks if the -s is on the plural side
+
+        // --- Drag/Drop Handlers ---
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', 's-morpheme');
+            e.target.style.opacity = 0.4;
+        }
+
+        function handleTokenClick() {
+            if (!sTokenIsPlural) {
+                moveSToken(pluralSentence);
             }
         }
 
-        // Drag functionality
-        sToken.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', 's-morpheme');
-            e.target.style.opacity = 0.4;
-        });
-
-        sToken.addEventListener('dragend', (e) => {
-            e.target.style.opacity = 1.0;
-        });
-
-        // Drop Zone: Plural Panel (where the Noun lives)
-        pluralPanel.addEventListener('dragover', (e) => {
+        // Drop Zone: Plural Panel
+        pluralSentence.parentNode.addEventListener('dragover', (e) => {
             e.preventDefault();
             pluralPanel.style.boxShadow = '0 0 15px var(--red)';
         });
 
-        pluralPanel.addEventListener('dragleave', (e) => {
+        pluralSentence.parentNode.addEventListener('dragleave', (e) => {
             pluralPanel.style.boxShadow = 'none';
         });
 
-        pluralPanel.addEventListener('drop', (e) => {
+        pluralSentence.parentNode.addEventListener('drop', (e) => {
             e.preventDefault();
             pluralPanel.style.boxShadow = 'none';
 
-            if (e.dataTransfer.getData('text/plain') === 's-morpheme') {
-                // Successfully moved S to the plural side
-                // 1. Visually remove S from singular verb
+            if (e.dataTransfer.getData('text/plain') === 's-morpheme' && !sTokenIsPlural) {
+                moveSToken(pluralSentence);
+            }
+        });
+
+        // Function to move the token and update visuals
+        function moveSToken(targetZone) {
+            if (targetZone === pluralSentence) {
+                // Move from Singular to Plural
                 sToken.remove();
                 
-                // 2. Change the sentence state to Plural
-                updateVisuals(true);
+                // Add token to the end of the plural noun
+                const nounSpan = pluralSentence.querySelector('#plural-noun-target');
+                if (nounSpan) {
+                    nounSpan.textContent = nounSpan.textContent.slice(0, -1); // Remove the existing plural marker for clarity
+                    nounSpan.appendChild(sToken);
+                }
+                
+                sTokenIsPlural = true;
+                updateVisuals();
+            } else if (targetZone === singularSentence) {
+                // Move from Plural back to Singular (not used in primary task, but for reset)
+                sToken.remove();
+                const singularVerb = singularSentence.querySelector('span');
+                if (singularVerb) {
+                    singularVerb.appendChild(sToken);
+                }
+                sTokenIsPlural = false;
+                updateVisuals();
             }
-        });
+        }
 
-        // Click functionality for accessibility/ease of use
-        sToken.addEventListener('click', (e) => {
-            // Check if the token is currently in the Singular verb slot
-            if (sToken.parentNode.id === 'singular-sentence') {
-                // Move to plural state
-                sToken.remove(); // Remove from singular side
-                updateVisuals(true);
+        // --- Core Functions ---
+
+        function loadActivity(index) {
+            const [singularNoun, singularVerb, singularIcon, pluralIcon] = activityBank[index];
+            currentActivityIndex = index;
+            sTokenIsPlural = false; // Reset state
+
+            activityCounter.textContent = `Activity ${index + 1} of ${activityBank.length}`;
+            nextButton.style.display = 'none';
+
+            // 1. Setup Singular Panel
+            singularSentence.innerHTML = `${singularNoun} <span id="singular-verb-target">${singularVerb.slice(0, -1)}</span>.`; // Remove -s
+            singularSentence.querySelector('span').appendChild(sToken);
+            singularPictogram.textContent = singularIcon;
+            
+            // 2. Setup Plural Panel
+            pluralSentence.innerHTML = `${singularNoun.replace(/The|A/g, 'The')} <span id="plural-noun-target">${singularVerb.slice(0, -1)}s</span> <span id="plural-verb-target">${singularVerb.slice(0, -1)}</span>.`;
+            pluralPictogram.textContent = pluralIcon;
+
+            // 3. Force initial Singular state (Verb has -s)
+            singularPanel.style.backgroundColor = 'var(--yellow)';
+            pluralPanel.style.backgroundColor = 'white';
+            feedback.textContent = `Activity loaded. Move the -s!`;
+            feedback.style.color = 'var(--text-dark)';
+            
+            checkState(); // Check initial state (should show error)
+        }
+
+        function updateVisuals() {
+            const [singularNoun, singularVerb, singularIcon, pluralIcon] = activityBank[currentActivityIndex];
+            
+            if (sTokenIsPlural) {
+                // Plural State: Noun has -s, Verb does not
+                singularSentence.innerHTML = `${singularNoun} ${singularVerb.slice(0, -1)}.`; // The cat walk.
+                pluralSentence.innerHTML = `${singularNoun.replace(/The|A/g, 'The')} <span id="plural-noun-target">${singularVerb.slice(0, -1)}s</span> <span id="plural-verb-target">${singularVerb.slice(0, -1)}</span>.`;
+                pluralSentence.querySelector('#plural-noun-target').appendChild(sToken); // Re-attach token to noun placeholder if it was moved
+
+            } else {
+                // Singular State: Noun does not have -s, Verb has -s
+                singularSentence.innerHTML = `${singularNoun} <span id="singular-verb-target">${singularVerb.slice(0, -1)}</span>.`;
+                singularSentence.querySelector('#singular-verb-target').appendChild(sToken);
+
+                pluralSentence.innerHTML = `${singularNoun.replace(/The|A/g, 'The')} ${singularVerb.slice(0, -1)}s ${singularVerb.slice(0, -1)}.`;
             }
-        });
+        }
+        
+        function checkState() {
+            if (sTokenIsPlural) {
+                // CORRECT STATE (Singular Verb, Plural Noun)
+                feedback.textContent = '🥇 CORRECT! The -s moved from the verb to the noun.';
+                feedback.style.color = 'var(--green)';
+                singularPanel.style.backgroundColor = 'white';
+                pluralPanel.style.backgroundColor = 'var(--yellow)';
+                nextButton.style.display = 'inline-block';
+            } else {
+                // INCORRECT STATE (The default)
+                feedback.textContent = '❌ Fix the plural side! The -s is still on the singular verb.';
+                feedback.style.color = 'var(--red)';
+                singularPanel.style.backgroundColor = 'var(--yellow)';
+                pluralPanel.style.backgroundColor = 'white';
+                nextButton.style.display = 'none';
+            }
+        }
 
-        // Initial state load
-        updateVisuals(false); 
+        function loadNextActivity() {
+            const nextIndex = currentActivityIndex + 1;
+            if (nextIndex < activityBank.length) {
+                loadActivity(nextIndex);
+            } else {
+                feedback.textContent = "🥳 YOU CRUSHED IT! All 20 Plural Punctuation activities complete. Time to master another module.";
+                feedback.style.color = 'var(--purple)';
+                nextButton.style.display = 'none';
+            }
+        }
 
+        // Start the first activity on load
+        loadActivity(0); 
     </script>
 </body>
 </html>
