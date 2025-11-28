@@ -1,318 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚂 Activity 2: Plural Punctuation</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚂 Activity 2: Plural Punctuation</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
     /* Specific styles for the Plural Switcher */
-    .activity-counter {
-        color: var(--green);
-        font-size: 1.2em;
-        margin-top: -10px;
-    }
+    .activity-counter {
+        color: var(--green);
+        font-size: 1.2em;
+        margin-top: -10px;
+    }
 
-    /* NEW SINGLE-TRACK LAYOUT */
-    .activity-track-container {
-        background-color: white;
-        padding: 30px 40px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        min-height: 250px;
-        margin-top: 30px;
-        border: 4px solid var(--purple); /* The main track border */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+    /* NEW SINGLE-TRACK LAYOUT */
+    .activity-track-container {
+        background-color: white;
+        padding: 30px 40px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        min-height: 250px;
+        margin-top: 30px;
+        border: 4px solid var(--purple); /* The main track border */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-    .pictogram-visual {
-        min-height: 100px;
-        font-size: 4em;
-        margin-bottom: 20px;
-    }
+    .pictogram-visual {
+        min-height: 100px;
+        font-size: 4em;
+        margin-bottom: 20px;
+    }
 
-    .sentence-zone {
-        font-size: 2em;
-        font-weight: 700;
-        padding: 15px 0;
-        min-height: 50px;
-        line-height: 1.4;
-        border-bottom: 2px dashed var(--blue);
-        text-align: center; /* Center the sentence content */
-    }
+    .sentence-zone {
+        font-size: 2em;
+        font-weight: 700;
+        padding: 15px 0;
+        min-height: 50px;
+        line-height: 1.4;
+        border-bottom: 2px dashed var(--blue);
+        text-align: center; /* Center the sentence content */
+    }
 
-    .s-morpheme {
-        background-color: var(--red);
-        color: white;
-        padding: 5px 10px;
-        border-radius: 50%;
-        cursor: grab;
-        display: inline-block;
-        transition: transform 0.2s;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        font-size: 0.8em;
-        line-height: 1;
-        margin: 0 2px;
-        user-select: none;
-    }
-    .s-morpheme:hover {
-        transform: scale(1.1);
-    }
+    .s-morpheme {
+        background-color: var(--red);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 50%;
+        cursor: grab;
+        display: inline-block;
+        transition: transform 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        font-size: 0.8em;
+        line-height: 1;
+        margin: 0 2px;
+        user-select: none;
+    }
+    .s-morpheme:hover {
+        transform: scale(1.1);
+    }
 
-    .check-button {
-        margin-top: 20px;
-    }
+    .check-button {
+        margin-top: 20px;
+    }
     </style>
 </head>
 <body>
-    <header class="header">
-        <h1>🚂 Plural Punctuation Switcher</h1>
-        <p class="activity-page-title activity-counter" id="activity-counter">Activity 1 of 20</p>
-    </header>
-    <nav class="navigation">
-        <a href="index.html">🏠 Main Hub</a>
-        <a href="locomotive-lingo.html">1. Locomotive Lingo 🧩</a>
-        <a href="pictogram-puzzle.html">3. Pictogram Puzzle 🖼️</a>
-    </nav>
-    <main class="content-container">
+    <header class="header">
+        <h1>🚂 Plural Punctuation Switcher</h1>
+        <p class="activity-page-title activity-counter" id="activity-counter">Activity 1 of 20</p>
+    </header>
+    <nav class="navigation">
+        <a href="index.html">🏠 Main Hub</a>
+        <a href="locomotive-lingo.html">1. Locomotive Lingo 🧩</a>
+        <a href="pictogram-puzzle.html">3. Pictogram Puzzle 🖼️</a>
+    </nav>
+    <main class="content-container">
 
-        <div class="instruction-box">
-            <p><strong>Instructions:</strong> Drag the <strong>-s token</strong> 🔴 from the verb and drop it onto the noun to match the **Plural Picture**. Watch the picture change!</p>
-        </div> 
+        <div class="instruction-box">
+            <p><strong>Instructions:</strong> Drag the <strong>-s token</strong> 🔴 from the verb and drop it onto the noun to match the **Plural Picture**. Watch the picture change!</p>
+        </div> 
 
-        <div class="activity-track-container" id="activity-track-container">
+        <div class="activity-track-container" id="activity-track-container">
 
-            <div class="pictogram-visual" id="pictogram-display">
-                            </div>
+            <div class="pictogram-visual" id="pictogram-display">
+                </div>
 
-            <div class="sentence-zone" id="sentence-zone">
-                            </div>
+            <div class="sentence-zone" id="sentence-zone">
+                </div>
 
-        </div>
+        </div>
 
-        <button class="check-button" onclick="checkState()">✅ Check State</button>
-        <button class="check-button" id="next-activity-btn" style="display: none; background-color: var(--purple);" onclick="loadNextActivity()">➡️ Next Activity</button>
-        <p id="feedback-message" style="font-size: 1.5em; font-weight: 700; margin-top: 20px; color: var(--text-dark);">Move the -s to the correct side!</p>
+        <button class="check-button" onclick="checkState()">✅ Check State</button>
+        <button class="check-button" id="next-activity-btn" style="display: none; background-color: var(--purple);" onclick="loadNextActivity()">➡️ Next Activity</button>
+        <p id="feedback-message" style="font-size: 1.5em; font-weight: 700; margin-top: 20px; color: var(--text-dark);">Move the -s to the correct side!</p>
 
-    </main>
-    <footer class="footer">
-        <p>Keep those train parts moving! ✨</p>
-    </footer>
+    </main>
+    <footer class="footer">
+        <p>Keep those train parts moving! ✨</p>
+    </footer>
 
 <script>
-        // --- JavaScript for the Plural Switcher Logic (20 Activities) ---
+        // --- JavaScript for the Plural Switcher Logic (20 Activities) ---
 
-        const sToken = document.createElement('span');
-        sToken.id = 's-token';
-        sToken.className = 's-morpheme';
-        sToken.textContent = '-s';
-        sToken.draggable = true;
-        sToken.addEventListener('dragstart', handleDragStart);
-        sToken.addEventListener('click', handleTokenClick); // Click handler for accessibility
+        const sToken = document.createElement('span');
+        sToken.id = 's-token';
+        sToken.className = 's-morpheme';
+        sToken.textContent = '-s';
+        sToken.draggable = true;
+        sToken.addEventListener('dragstart', handleDragStart);
+        sToken.addEventListener('click', handleTokenClick); // Click handler for accessibility
 
-        // New DOM elements
-        const trackContainer = document.getElementById('activity-track-container');
-        const pictogramDisplay = document.getElementById('pictogram-display');
-        const sentenceZone = document.getElementById('sentence-zone');
-        
-        // Old elements to keep
-        const nextButton = document.getElementById('next-activity-btn');
-        const feedback = document.getElementById('feedback-message');
-        const activityCounter = document.getElementById('activity-counter');
-        const checkButton = document.querySelector('.check-button');
+        // New DOM elements
+        const trackContainer = document.getElementById('activity-track-container');
+        const pictogramDisplay = document.getElementById('pictogram-display');
+        const sentenceZone = document.getElementById('sentence-zone');
+        
+        // Old elements to keep
+        const nextButton = document.getElementById('next-activity-btn');
+        const feedback = document.getElementById('feedback-message');
+        const activityCounter = document.getElementById('activity-counter');
+        const checkButton = document.querySelector('.check-button');
 
-        // --- THE 20 ACTIVITY BANK ---
-        // Format: [Singular Noun, Singular Verb (with s/.), Singular Icon, Plural Icon]
-        // Example: ["The cat", "walks.", "🐱", "🐈‍⬛🐈‍⬛"]
-        const activityBank = [
-            ["The cat", "walks.", "🐱🚶", "🐈‍⬛🐈‍⬛🚶"], // 1
-            ["The dog", "runs.", "🐕‍🦺🏃", "🐶🐶🏃"], // 2
-            ["The boy", "throws.", "👦🏻⚾", "⚽⚽👦🏻"], // 3
-            ["The girl", "reads.", "👧🏻📖", "📚📚👧🏻"], // 4
-            ["The train", "stops.", "🚂🛑", "🚂🚂🛑"], // 5
-            ["The engine", "whistles.", "🔊🚂", "🚂🔊🚂"], // 6
-            ["The student", "learns.", "🧑‍🎓🧠", "📚🧑‍🎓🧠"], // 7
-            ["The teacher", "smiles.", "👩‍🏫😊", "👨‍🏫👩‍🏫😊"], // 8
-            ["A flower", "grows.", "🌸🌱", "🌼🌼🌱"], // 9
-            ["A baby", "cries.", "👶😭", "🍼👶😭"], // 10
-            ["My friend", "calls.", "📞👯", "📞🧑‍🤝‍🧑"], // 11
-            ["The doctor", "helps.", "👩‍⚕️➕", "🧑‍⚕️👩‍⚕️➕"], // 12
-            ["The clock", "ticks.", "⏰✔️", "🕰️⏰✔️"], // 13
-            ["The boat", "sails.", "⛵🌊", "⚓⛵🌊"], // 14
-            ["A star", "shines.", "⭐✨", "🌟🌟✨"], // 15
-            ["A pencil", "draws.", "✏️🖍️", "🖊️✏️🖍️"], // 16
-            ["The mouse", "eats.", "🐁🧀", "🐭🐭🧀"], // 17
-            ["The rabbit", "jumps.", "🐇⬆️", "🐰🐰⬆️"], // 18
-            ["The light", "blinks.", "💡⚡", "💡💡⚡"], // 19
-            ["The farmer", "works.", "🧑‍🌾🔨", "👩‍🌾🧑‍🌾🔨"] // 20
-        ];
+        // --- THE 20 ACTIVITY BANK ---
+        // Format: [Singular Noun, Singular Verb (with s/.), Singular Icon, Plural Icon]
+        // Example: ["The cat", "walks.", "🐱", "🐈‍⬛🐈‍⬛"]
+        const activityBank = [
+            ["The cat", "walks.", "🐱🚶", "🐈‍⬛🐈‍⬛🚶"], // 1
+            ["The dog", "runs.", "🐕‍🦺🏃", "🐶🐶🏃"], // 2
+            ["The boy", "throws.", "👦🏻⚾", "⚽⚽👦🏻"], // 3
+            ["The girl", "reads.", "👧🏻📖", "📚📚👧🏻"], // 4
+            ["The train", "stops.", "🚂🛑", "🚂🚂🛑"], // 5
+            ["The engine", "whistles.", "🔊🚂", "🚂🔊🚂"], // 6
+            ["The student", "learns.", "🧑‍🎓🧠", "📚🧑‍🎓🧠"], // 7
+            ["The teacher", "smiles.", "👩‍🏫😊", "👨‍🏫👩‍🏫😊"], // 8
+            ["A flower", "grows.", "🌸🌱", "🌼🌼🌱"], // 9
+            ["A baby", "cries.", "👶😭", "🍼👶😭"], // 10
+            ["My friend", "calls.", "📞👯", "📞🧑‍🤝‍🧑"], // 11
+            ["The doctor", "helps.", "👩‍⚕️➕", "🧑‍⚕️👩‍⚕️➕"], // 12
+            ["The clock", "ticks.", "⏰✔️", "🕰️⏰✔️"], // 13
+            ["The boat", "sails.", "⛵🌊", "⚓⛵🌊"], // 14
+            ["A star", "shines.", "⭐✨", "🌟🌟✨"], // 15
+            ["A pencil", "draws.", "✏️🖍️", "🖊️✏️🖍️"], // 16
+            ["The mouse", "eats.", "🐁🧀", "🐭🐭🧀"], // 17
+            ["The rabbit", "jumps.", "🐇⬆️", "🐰🐰⬆️"], // 18
+            ["The light", "blinks.", "💡⚡", "💡💡⚡"], // 19
+            ["The farmer", "works.", "🧑‍🌾🔨", "👩‍🌾🧑‍🌾🔨"] // 20
+        ];
 
-        let currentActivityIndex = 0;
-        let sTokenIsPlural = false; // Tracks if the -s is on the Plural Noun side
+        let currentActivityIndex = 0;
+        let sTokenIsPlural = false; // Tracks if the -s is on the Plural Noun side
 
-        // --- Drag/Drop Handlers ---
-        function handleDragStart(e) {
-            e.dataTransfer.setData('text/plain', 's-morpheme');
-            e.target.style.opacity = 0.4;
-        }
+        // --- Drag/Drop Handlers ---
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', 's-morpheme');
+            e.target.style.opacity = 0.4;
+        }
 
-        function handleDragEnd(e) {
-            e.target.style.opacity = 1;
-        }
-        sToken.addEventListener('dragend', handleDragEnd);
+        function handleDragEnd(e) {
+            e.target.style.opacity = 1;
+        }
+        sToken.addEventListener('dragend', handleDragEnd);
 
-        function handleTokenClick() {
-            // Click handler toggles the state
-            moveSToken(!sTokenIsPlural);
-        }
+        function handleTokenClick() {
+            // Click handler toggles the state
+            moveSToken(!sTokenIsPlural);
+        }
 
-        // --- Drop Zone Logic (Corrected) ---
-        sentenceZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            trackContainer.style.boxShadow = '0 0 15px var(--red)';
-        });
+        // --- Drop Zone Logic (Corrected) ---
+        sentenceZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            trackContainer.style.boxShadow = '0 0 15px var(--red)';
+        });
 
-        sentenceZone.addEventListener('dragleave', (e) => {
-            trackContainer.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
-        });
+        sentenceZone.addEventListener('dragleave', (e) => {
+            trackContainer.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
+        });
 
-        sentenceZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            trackContainer.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
+        sentenceZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            trackContainer.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
 
-            if (e.dataTransfer.getData('text/plain') === 's-morpheme') {
-                const nounTarget = sentenceZone.querySelector('#plural-noun-s-location');
-                const verbTarget = sentenceZone.querySelector('#singular-verb-target');
-                const dropX = e.clientX;
-                
-                let targetElement = null;
-                if (nounTarget && verbTarget) {
-                    const nounRect = nounTarget.getBoundingClientRect();
-                    const verbRect = verbTarget.getBoundingClientRect();
+            if (e.dataTransfer.getData('text/plain') === 's-morpheme') {
+                const nounTarget = sentenceZone.querySelector('#plural-noun-s-location');
+                const verbTarget = sentenceZone.querySelector('#singular-verb-target');
+                const dropX = e.clientX;
+                
+                let targetElement = null;
+                if (nounTarget && verbTarget) {
+                    const nounRect = nounTarget.getBoundingClientRect();
+                    const verbRect = verbTarget.getBoundingClientRect();
 
-                    const nounDistance = Math.abs(dropX - (nounRect.left + nounRect.width / 2));
-                    const verbDistance = Math.abs(dropX - (verbRect.left + verbRect.width / 2));
+                    const nounDistance = Math.abs(dropX - (nounRect.left + nounRect.width / 2));
+                    const verbDistance = Math.abs(dropX - (verbRect.left + verbRect.width / 2));
 
-                    if (nounDistance < verbDistance) {
-                        targetElement = nounTarget;
-                    } else {
-                        targetElement = verbTarget;
-                    }
-                }
+                    if (nounDistance < verbDistance) {
+                        targetElement = nounTarget;
+                    } else {
+                        targetElement = verbTarget;
+                    }
+                }
 
-                // Logic to determine where to move the token
-                if (targetElement && targetElement.id.includes('noun')) {
-                    moveSToken(true); // Move to plural (Noun)
-                } else if (targetElement && targetElement.id.includes('verb')) {
-                    moveSToken(false); // Move to singular (Verb)
-                } else {
-                    // If dropping in the middle, toggle the state (like a click)
-                    moveSToken(!sTokenIsPlural); 
-                }
-            }
-        });
+                // Logic to determine where to move the token
+                if (targetElement && targetElement.id.includes('noun')) {
+                    moveSToken(true); // Move to plural (Noun)
+                } else if (targetElement && targetElement.id.includes('verb')) {
+                    moveSToken(false); // Move to singular (Verb)
+                } else {
+                    // If dropping in the middle, toggle the state (like a click)
+                    moveSToken(!sTokenIsPlural); 
+                }
+            }
+        });
 
 
-        // Function to move the token and update visuals (Boolean determines new state)
-        function moveSToken(newIsPluralState) {
-            sTokenIsPlural = newIsPluralState;
-            updateVisuals();
-        }
-            
+        // Function to move the token and update visuals (Boolean determines new state)
+        function moveSToken(newIsPluralState) {
+            sTokenIsPlural = newIsPluralState;
+            updateVisuals();
+        }
+            
 
-        // --- Core Functions (CLEANED) ---
+        // --- Core Functions (CLEANED) ---
 
-        function updateVisuals() {
-            const [singularNoun, singularVerb, singularIcon, pluralIcon] = activityBank[currentActivityIndex];
-            
-            // Base parts:
-            const baseVerb = singularVerb.replace(/\./g, '').slice(0, -1); // e.g., 'walk' (removes 's' and '.')
-            const nounPrefix = singularNoun.split(' ')[0]; // e.g., 'The'
-            const nounBase = singularNoun.split(' ')[1]; // e.g., 'cat'
+        function updateVisuals() {
+            const [singularNoun, singularVerb, singularIcon, pluralIcon] = activityBank[currentActivityIndex];
+            
+            // Base parts:
+            const baseVerb = singularVerb.replace(/\./g, '').slice(0, -1); // e.g., 'walk' (removes 's' and '.')
+            const nounPrefix = singularNoun.split(' ')[0]; // e.g., 'The'
+            const nounBase = singularNoun.split(' ')[1]; // e.g., 'cat'
 
-            // Always ensure the token is removed before deciding where to put it
-            sToken.remove();
-            
-            // Clear the old sentence
-            sentenceZone.innerHTML = '';
+            // Always ensure the token is removed before deciding where to put it
+            sToken.remove();
+            
+            // Clear the old sentence
+            sentenceZone.innerHTML = '';
 
-            if (sTokenIsPlural) {
-                // STATE: PLURAL (Target is Noun + s)
-                
-                // Sentence: The cats-s walk.
-                sentenceZone.innerHTML = `${nounPrefix} <span id="plural-noun-s-location">${nounBase}</span> ${baseVerb}.`;
-                sentenceZone.querySelector('#plural-noun-s-location').appendChild(sToken); // Attach -s after the noun base
+            if (sTokenIsPlural) {
+                // STATE: PLURAL (Target is Noun + s)
+                
+                // Sentence: The cat-s walk.
+                sentenceZone.innerHTML = `${nounPrefix} <span id="plural-noun-s-location">${nounBase}</span> ${baseVerb}.`;
+                sentenceZone.querySelector('#plural-noun-s-location').appendChild(sToken); // Attach -s after the noun base
 
-                // Update the visual to the plural icon
-                pictogramDisplay.textContent = pluralIcon; 
-                
-            } else {
-                // STATE: SINGULAR (Initial is Verb + s)
-                
-                // Sentence: The cat walks-s.
-                sentenceZone.innerHTML = `${singularNoun} <span id="singular-verb-target">${baseVerb}</span>.`;
-                sentenceZone.querySelector('#singular-verb-target').appendChild(sToken); // Attach -s after the verb base
-                
-                // Update the visual to the singular icon
-                pictogramDisplay.textContent = singularIcon;
-            }
-        }
+                // Update the visual to the plural icon
+                pictogramDisplay.textContent = pluralIcon; 
+                
+            } else {
+                // STATE: SINGULAR (Initial is Verb + s)
+                
+                // Sentence: The cat walks-s.
+                sentenceZone.innerHTML = `${singularNoun} <span id="singular-verb-target">${baseVerb}</span>.`;
+                sentenceZone.querySelector('#singular-verb-target').appendChild(sToken); // Attach -s after the verb base
+                
+                // Update the visual to the singular icon
+                pictogramDisplay.textContent = singularIcon;
+            }
+        }
 
-        function checkState() {
-            checkButton.style.display = 'none'; // Hide check button during check
-            const currentIcon = pictogramDisplay.textContent.trim();
-            const [,, singularIcon, pluralIcon] = activityBank[currentActivityIndex];
-            
-            // Check if the -s is on the Plural Noun side AND the picture is plural
-            if (sTokenIsPlural && currentIcon.includes(pluralIcon)) {
-                feedback.textContent = `🥳 CORRECT! The -s is on the plural noun, matching the plural picture.`;
-                feedback.style.color = 'var(--green)';
-                trackContainer.style.borderColor = 'var(--green)';
-                nextButton.style.display = 'block';
-            } else {
-                // If the state is singular, or the picture/token don't match
-                feedback.textContent = `❌ The -s token needs to be on the Noun to match the plural picture!`;
-                feedback.style.color = 'var(--red)';
-                trackContainer.style.borderColor = 'var(--red)';
-                checkButton.style.display = 'block';
-            }
-            
-            setTimeout(() => { trackContainer.style.borderColor = 'var(--purple)'; }, 2000);
-        }
-        
-        function loadActivity(index) {
-            if (index >= activityBank.length) {
-                feedback.textContent = "🥳 YOU CRUSHED IT! All activities complete. Time to master another module.";
-                feedback.style.color = 'var(--purple)';
-                nextButton.style.display = 'none';
-                checkButton.style.display = 'none';
-                return;
-            }
+        function checkState() {
+            checkButton.style.display = 'none'; // Hide check button during check
+            const currentIcon = pictogramDisplay.textContent.trim();
+            const [,, singularIcon, pluralIcon] = activityBank[currentActivityIndex];
+            
+            // Check if the -s is on the Plural Noun side AND the picture is plural
+            if (sTokenIsPlural && currentIcon.includes(pluralIcon)) {
+                feedback.textContent = `🥳 CORRECT! The -s is on the plural noun, matching the plural picture.`;
+                feedback.style.color = 'var(--green)';
+                trackContainer.style.borderColor = 'var(--green)';
+                nextButton.style.display = 'block';
+            } else {
+                // If the state is singular, or the picture/token don't match
+                feedback.textContent = `❌ The -s token needs to be on the Noun to match the plural picture!`;
+                feedback.style.color = 'var(--red)';
+                trackContainer.style.borderColor = 'var(--red)';
+                checkButton.style.display = 'block';
+            }
+            
+            setTimeout(() => { trackContainer.style.borderColor = 'var(--purple)'; }, 2000);
+        }
+        
+        function loadActivity(index) {
+            if (index >= activityBank.length) {
+                feedback.textContent = "🥳 YOU CRUSHED IT! All activities complete. Time to master another module.";
+                feedback.style.color = 'var(--purple)';
+                nextButton.style.display = 'none';
+                checkButton.style.display = 'none';
+                return;
+            }
 
-            currentActivityIndex = index;
-            sTokenIsPlural = false; // Always reset to the singular state
-            
-            activityCounter.textContent = `Activity ${index + 1} of ${activityBank.length}`;
-            nextButton.style.display = 'none';
-            checkButton.style.display = 'block';
+            currentActivityIndex = index;
+            sTokenIsPlural = false; // Always reset to the singular state
+            
+            activityCounter.textContent = `Activity ${index + 1} of ${activityBank.length}`;
+            nextButton.style.display = 'none';
+            checkButton.style.display = 'block';
 
-            // Initial setup always starts in the SINGULAR state.
-            updateVisuals();
-            
-            trackContainer.style.borderColor = 'var(--purple)';
-            feedback.textContent = `Move the -s to match the plural picture!`;
-            feedback.style.color = 'var(--text-dark)';
-        }
+            // Initial setup always starts in the SINGULAR state.
+            updateVisuals();
+            
+            trackContainer.style.borderColor = 'var(--purple)';
+            feedback.textContent = `Move the -s to match the plural picture!`;
+            feedback.style.color = 'var(--text-dark)';
+        }
 
-        function loadNextActivity() {
-            loadActivity(currentActivityIndex + 1);
-        }
+        function loadNextActivity() {
+            loadActivity(currentActivityIndex + 1);
+        }
 
-        // Start the first activity on load
-        loadActivity(0); 
-    </script>
+        // Start the first activity on load
+        loadActivity(0); 
+    </script>
 </body>
 </html>
