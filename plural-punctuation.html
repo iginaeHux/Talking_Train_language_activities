@@ -7,9 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
-    /* NOTE: I moved the CSS from the <head> into a <style> block where it belongs. */
-    /* If you keep your main CSS in style.css, delete this <style> block. If not, keep it. */
-
     /* Specific styles for the Plural Switcher */
     .activity-counter {
         color: var(--green);
@@ -44,6 +41,7 @@
         min-height: 50px;
         line-height: 1.4;
         border-bottom: 2px dashed var(--blue);
+        text-align: center; /* Center the sentence content */
     }
 
     .s-morpheme {
@@ -82,7 +80,7 @@
     <main class="content-container">
 
         <div class="instruction-box">
-            <p><strong>Instructions:</strong> Drag the <strong>-s token</strong> 🔴 from the verb and drop it onto the noun to switch the sentence from singular to plural and match the picture!</p>
+            <p><strong>Instructions:</strong> Drag the <strong>-s token</strong> 🔴 from the verb and drop it onto the noun to match the **Plural Picture**. Watch the picture change!</p>
         </div> 
 
         <div class="activity-track-container" id="activity-track-container">
@@ -167,12 +165,11 @@
         sToken.addEventListener('dragend', handleDragEnd);
 
         function handleTokenClick() {
-            // Click handler toggles the state, allowing the child to try both options
+            // Click handler toggles the state
             moveSToken(!sTokenIsPlural);
         }
 
-        // --- Drop Zone Logic (New) ---
-        // Drop listener on the main sentence zone
+        // --- Drop Zone Logic (Corrected) ---
         sentenceZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             trackContainer.style.boxShadow = '0 0 15px var(--red)';
@@ -187,12 +184,10 @@
             trackContainer.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
 
             if (e.dataTransfer.getData('text/plain') === 's-morpheme') {
-                // Determine if drop happened near the noun or the verb
                 const nounTarget = sentenceZone.querySelector('#plural-noun-s-location');
                 const verbTarget = sentenceZone.querySelector('#singular-verb-target');
                 const dropX = e.clientX;
                 
-                // Simple check: Is the drop closer to the noun target or the verb target?
                 let targetElement = null;
                 if (nounTarget && verbTarget) {
                     const nounRect = nounTarget.getBoundingClientRect();
@@ -206,18 +201,15 @@
                     } else {
                         targetElement = verbTarget;
                     }
-                } else if (nounTarget) {
-                    targetElement = nounTarget;
-                } else if (verbTarget) {
-                    targetElement = verbTarget;
                 }
 
-                if (targetElement && targetElement.id.includes('noun') && !sTokenIsPlural) {
-                    moveSToken(true); // Move to plural
-                } else if (targetElement && targetElement.id.includes('verb') && sTokenIsPlural) {
-                    moveSToken(false); // Move to singular
+                // Logic to determine where to move the token
+                if (targetElement && targetElement.id.includes('noun')) {
+                    moveSToken(true); // Move to plural (Noun)
+                } else if (targetElement && targetElement.id.includes('verb')) {
+                    moveSToken(false); // Move to singular (Verb)
                 } else {
-                    // If dropping on the current token location, toggle it (fallback to click logic)
+                    // If dropping in the middle, toggle the state (like a click)
                     moveSToken(!sTokenIsPlural); 
                 }
             }
@@ -231,14 +223,15 @@
         }
             
 
-        // --- Core Functions ---
+        // --- Core Functions (CLEANED) ---
 
         function updateVisuals() {
             const [singularNoun, singularVerb, singularIcon, pluralIcon] = activityBank[currentActivityIndex];
             
             // Base parts:
             const baseVerb = singularVerb.replace(/\./g, '').slice(0, -1); // e.g., 'walk' (removes 's' and '.')
-            const nounPrefix = singularNoun.replace(/The|A/g, 'The'); // ensures "The" is used for plural
+            const nounPrefix = singularNoun.split(' ')[0]; // e.g., 'The'
+            const nounBase = singularNoun.split(' ')[1]; // e.g., 'cat'
 
             // Always ensure the token is removed before deciding where to put it
             sToken.remove();
@@ -247,19 +240,19 @@
             sentenceZone.innerHTML = '';
 
             if (sTokenIsPlural) {
-                // STATE: PLURAL (Target)
+                // STATE: PLURAL (Target is Noun + s)
                 
-                // The sentence is built as plural (Noun+s, Verb base)
-                sentenceZone.innerHTML = `${nounPrefix}<span id="plural-noun-s-location">${singularNoun.includes('The') ? '' : ' '}</span> ${baseVerb}.`;
+                // Sentence: The cats-s walk.
+                sentenceZone.innerHTML = `${nounPrefix} <span id="plural-noun-s-location">${nounBase}</span> ${baseVerb}.`;
                 sentenceZone.querySelector('#plural-noun-s-location').appendChild(sToken); // Attach -s after the noun base
 
                 // Update the visual to the plural icon
                 pictogramDisplay.textContent = pluralIcon; 
                 
             } else {
-                // STATE: SINGULAR (Initial)
+                // STATE: SINGULAR (Initial is Verb + s)
                 
-                // The sentence is built as singular (Noun, Verb base + s)
+                // Sentence: The cat walks-s.
                 sentenceZone.innerHTML = `${singularNoun} <span id="singular-verb-target">${baseVerb}</span>.`;
                 sentenceZone.querySelector('#singular-verb-target').appendChild(sToken); // Attach -s after the verb base
                 
@@ -274,19 +267,14 @@
             const [,, singularIcon, pluralIcon] = activityBank[currentActivityIndex];
             
             // Check if the -s is on the Plural Noun side AND the picture is plural
-            if (sTokenIsPlural && currentIcon === pluralIcon) {
+            if (sTokenIsPlural && currentIcon.includes(pluralIcon)) {
                 feedback.textContent = `🥳 CORRECT! The -s is on the plural noun, matching the plural picture.`;
                 feedback.style.color = 'var(--green)';
                 trackContainer.style.borderColor = 'var(--green)';
                 nextButton.style.display = 'block';
-            } else if (!sTokenIsPlural && currentIcon === singularIcon) {
-                 feedback.textContent = `❌ That's the singular answer, but the goal is the plural answer! Move the -s to the Noun.`;
-                feedback.style.color = 'var(--red)';
-                trackContainer.style.borderColor = 'var(--red)';
-                checkButton.style.display = 'block'; // Keep check button visible for re-try
             } else {
-                // Mismatch, but we are primarily looking for the PLURAL state to pass
-                feedback.textContent = `❌ The -s token position doesn't match the picture. Move the -s to the Noun to match the plural picture.`;
+                // If the state is singular, or the picture/token don't match
+                feedback.textContent = `❌ The -s token needs to be on the Noun to match the plural picture!`;
                 feedback.style.color = 'var(--red)';
                 trackContainer.style.borderColor = 'var(--red)';
                 checkButton.style.display = 'block';
@@ -310,9 +298,6 @@
             activityCounter.textContent = `Activity ${index + 1} of ${activityBank.length}`;
             nextButton.style.display = 'none';
             checkButton.style.display = 'block';
-
-            // Set the instruction to always focus on the plural goal for this activity
-            document.querySelector('.instruction-box p').innerHTML = `<strong>Instructions:</strong> Drag the <strong>-s token</strong> 🔴 from the verb and drop it onto the noun to switch the sentence from singular to plural and match the picture!`;
 
             // Initial setup always starts in the SINGULAR state.
             updateVisuals();
